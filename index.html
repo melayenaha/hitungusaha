@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>HitungUsaha</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>HitungUsaha</h1>
+
+<p>Aplikasi pencatat keuntungan usaha</p>
+
+
+
+<label>Nama Produk</label>
+<input id="produk" type="text" placeholder="Contoh: Kopi">
+
+
+
+<label>Kategori</label>
+<input id="kategori" type="text" placeholder="Contoh: Minuman">
+
+
+
+<label>Stok Awal</label>
+<input id="stok" type="number" placeholder="Contoh: 100">
+
+
+
+<label>Harga Modal</label>
+<input id="modal" type="number">
+
+
+
+<label>Harga Jual</label>
+<input id="jual" type="number">
+
+
+
+<label>Jumlah Terjual</label>
+<input id="jumlah" type="number">
+
+
+
+<button onclick="hitung()">
+Tambah Transaksi
+</button>
+
+
+
+<h2 id="hasil"></h2>
+
+
+<div id="peringatan"></div>
+
+
+
+
+
+<div class="dashboard">
+
+
+<div class="box">
+<h3>Total Penjualan</h3>
+<h2 id="totalJual">Rp 0</h2>
+</div>
+
+
+
+<div class="box">
+<h3>Total Untung</h3>
+<h2 id="totalUntung">Rp 0</h2>
+</div>
+
+
+
+<div class="box">
+<h3>Transaksi</h3>
+<h2 id="jumlahTransaksi">0</h2>
+</div>
+
+
+</div>
+
+
+
+
+
+<h3>Grafik Keuntungan</h3>
+
+
+<canvas id="grafik"></canvas>
+
+
+
+
+<h3>Riwayat Transaksi</h3>
+
+
+
+<button onclick="hapusData()">
+Hapus Semua
+</button>
+
+
+<button onclick="exportData()">
+Export Spreadsheet
+</button>
+
+
+
+
+
+<table id="riwayat">
+
+
+<tr>
+
+<th>Produk</th>
+<th>Kategori</th>
+<th>Stok</th>
+<th>Modal</th>
+<th>Jual</th>
+<th>Jumlah</th>
+<th>Untung</th>
+<th>Tanggal</th>
+
+
+</tr>
+
+
+</table>
+
+
+
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
