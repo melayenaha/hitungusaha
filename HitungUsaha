@@ -1,0 +1,682 @@
+let data =
+JSON.parse(localStorage.getItem("transaksi")) || [];
+
+
+let chart;
+
+
+tampilData();
+
+
+
+function hitung(){
+
+
+let produk =
+document.getElementById("produk").value;
+
+
+let kategori =
+document.getElementById("kategori").value;
+
+
+let stok =
+Number(document.getElementById("stok").value);
+
+
+let modal =
+Number(document.getElementById("modal").value);
+
+
+let jual =
+Number(document.getElementById("jual").value);
+
+
+let jumlah =
+Number(document.getElementById("jumlah").value);
+
+
+
+if(jumlah > stok){
+
+alert("Stok tidak cukup!");
+
+return;
+
+}
+
+
+
+let totalModal =
+modal * jumlah;
+
+
+let totalJual =
+jual * jumlah;
+
+
+let untung =
+totalJual - totalModal;
+
+
+
+stok = stok - jumlah;
+
+
+
+
+document.getElementById("hasil").innerHTML =
+"Untung: Rp " + untung;
+
+
+
+let transaksi={
+
+
+produk:produk,
+
+kategori:kategori,
+
+stok:stok,
+
+modal:modal,
+
+jual:jual,
+
+jumlah:jumlah,
+
+totalModal:totalModal,
+
+totalJual:totalJual,
+
+untung:untung,
+
+tanggal:new Date().toLocaleDateString()
+
+
+};
+
+
+
+data.push(transaksi);
+
+
+
+localStorage.setItem(
+"transaksi",
+JSON.stringify(data)
+);
+
+
+
+tampilData();
+
+
+}
+
+
+
+
+
+function tampilData(){
+
+
+let tabel =
+document.getElementById("riwayat");
+
+
+
+tabel.innerHTML=`
+
+<tr>
+
+<th>Produk</th>
+<th>Kategori</th>
+<th>Stok</th>
+<th>Modal/Pcs</th>
+<th>Jual/Pcs</th>
+<th>Jumlah</th>
+<th>Total Modal</th>
+<th>Total Jual</th>
+<th>Untung</th>
+<th>Tanggal</th>
+
+</tr>`;
+
+
+data.forEach(item=>{
+
+
+let row =
+tabel.insertRow();
+
+
+
+row.insertCell(0).innerHTML=item.produk;
+
+row.insertCell(1).innerHTML=item.kategori;
+
+row.insertCell(2).innerHTML=item.stok;
+
+row.insertCell(3).innerHTML=item.modal;
+
+row.insertCell(4).innerHTML=item.jual;
+
+row.insertCell(5).innerHTML=item.jumlah;
+
+row.insertCell(6).innerHTML=item.totalModal;
+
+row.insertCell(7).innerHTML=item.totalJual;
+
+row.insertCell(8).innerHTML=item.untung;
+
+row.insertCell(9).innerHTML=item.tanggal;
+
+
+});
+
+
+
+dashboard();
+
+buatGrafik();
+
+cekStok();
+
+
+}
+
+
+
+
+function dashboard(){
+
+
+let jual=0;
+
+let untung=0;
+
+
+
+data.forEach(x=>{
+
+
+jual += x.totalJual;
+
+untung += x.untung;
+
+
+});
+
+
+
+totalJual.innerHTML =
+"Rp "+jual;
+
+
+totalUntung.innerHTML =
+"Rp "+untung;
+
+
+jumlahTransaksi.innerHTML =
+data.length;
+
+
+}
+
+
+
+
+function buatGrafik(){
+
+
+let nama=[];
+
+let nilai=[];
+
+
+
+data.forEach(x=>{
+
+
+nama.push(x.produk);
+
+nilai.push(x.untung);
+
+
+});
+
+
+
+if(chart){
+
+chart.destroy();
+
+}
+
+
+
+chart=new Chart(
+grafik,
+{
+
+type:"bar",
+
+data:{
+
+
+labels:nama,
+
+
+datasets:[{
+
+label:"Keuntungan",
+
+data:nilai
+
+}]
+
+
+}
+
+});
+
+
+}
+
+
+
+
+
+function cekStok(){
+
+
+let pesan="";
+
+
+
+data.forEach(item=>{
+
+
+if(item.stok<=10 && item.stok>0){
+
+
+pesan +=
+"⚠️ "+item.produk+
+" stok tersisa "+
+item.stok+
+"<br>";
+
+}
+
+
+
+if(item.stok==0){
+
+
+pesan +=
+"❌ "+item.produk+
+" HABIS<br>";
+
+}
+
+
+});
+
+
+
+peringatan.innerHTML=pesan;
+
+
+}
+
+
+
+
+
+function hapusData(){
+
+
+if(confirm("Hapus semua data?")){
+
+
+localStorage.removeItem("transaksi");
+
+data=[];
+
+tampilData();
+
+
+}
+
+}
+
+
+
+
+function exportData(){
+
+
+let csv =
+"Produk,Kategori,Stok,Modal,Jual,Jumlah,Total Modal,Total Jual,Untung,Tanggal\n";
+
+
+
+data.forEach(x=>{
+
+
+csv +=
+
+`${x.produk},${x.kategori},${x.stok},${x.modal},${x.jual},${x.jumlah},${x.totalModal},${x.totalJual},${x.untung},${x.tanggal}\n`;
+
+
+
+});
+
+
+
+let file =
+new Blob([csv],
+{type:"text/csv"});
+
+
+let a =
+document.createElement("a");
+
+
+a.href =
+URL.createObjectURL(file);
+
+
+a.download =
+"laporan-usaha.csv";
+
+
+a.click();
+
+
+}
+body{
+
+font-family:Arial;
+background:#f4f7fb;
+padding:30px;
+
+}
+
+
+.container{
+
+max-width:950px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px #ccc;
+
+}
+
+
+h1{
+
+color:#1f4e79;
+
+}
+
+
+label{
+
+display:block;
+margin-top:12px;
+
+}
+
+
+input{
+
+width:95%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+
+}
+
+
+button{
+
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#1f4e79;
+color:white;
+cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#163a5c;
+
+}
+
+
+
+.dashboard{
+
+display:flex;
+gap:10px;
+margin-top:20px;
+
+}
+
+
+
+.box{
+
+flex:1;
+background:#eef5ff;
+padding:15px;
+border-radius:10px;
+text-align:center;
+
+}
+
+
+
+#hasil{
+
+color:green;
+
+}
+
+
+
+#peringatan{
+
+margin-top:15px;
+font-weight:bold;
+
+}
+
+
+
+table{
+
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+font-size:13px;
+
+}
+
+
+
+th,td{
+
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+
+}
+
+
+
+canvas{
+
+margin-top:20px;
+
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>HitungUsaha</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>HitungUsaha</h1>
+
+<p>Aplikasi pencatat keuntungan usaha</p>
+
+
+
+<label>Nama Produk</label>
+<input id="produk" type="text" placeholder="Contoh: Kopi">
+
+
+
+<label>Kategori</label>
+<input id="kategori" type="text" placeholder="Contoh: Minuman">
+
+
+
+<label>Stok Awal</label>
+<input id="stok" type="number" placeholder="Contoh: 100">
+
+
+
+<label>Modal Per Produk</label>
+<input id="modal" type="number" placeholder="5000">
+
+
+
+<label>Harga Jual Per Produk</label>
+<input id="jual" type="number" placeholder="8000">
+
+
+
+<label>Jumlah Terjual</label>
+<input id="jumlah" type="number" placeholder="10">
+
+
+
+<button onclick="hitung()">
+Tambah Transaksi
+</button>
+
+
+
+<h2 id="hasil"></h2>
+
+
+<div id="peringatan"></div>
+
+
+
+
+<div class="dashboard">
+
+
+<div class="box">
+<h3>Total Penjualan</h3>
+<h2 id="totalJual">Rp 0</h2>
+</div>
+
+
+<div class="box">
+<h3>Total Untung</h3>
+<h2 id="totalUntung">Rp 0</h2>
+</div>
+
+
+<div class="box">
+<h3>Transaksi</h3>
+<h2 id="jumlahTransaksi">0</h2>
+</div>
+
+
+</div>
+
+
+
+
+<h3>Grafik Keuntungan</h3>
+
+<canvas id="grafik"></canvas>
+
+
+
+
+<h3>Riwayat Transaksi</h3>
+
+
+<button onclick="hapusData()">
+Hapus Semua
+</button>
+
+
+<button onclick="exportData()">
+Export Spreadsheet
+</button>
+
+
+
+
+<table id="riwayat">
+
+<tr>
+
+<th>Produk</th>
+<th>Kategori</th>
+<th>Stok</th>
+<th>Modal/Pcs</th>
+<th>Jual/Pcs</th>
+<th>Jumlah</th>
+<th>Total Modal</th>
+<th>Total Jual</th>
+<th>Untung</th>
+<th>Tanggal</th>
+
+</tr>
+
+
+</table>
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
